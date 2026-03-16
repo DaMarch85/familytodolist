@@ -13,6 +13,7 @@
         --primary: #4f46e5;
         --primary-soft: #eef2ff;
         --green-soft: #ecfdf5;
+        --amber-soft: #fff7ed;
         --border: #e5e7eb;
         --danger: #dc2626;
         --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
@@ -31,28 +32,27 @@
       }
 
       .wrap {
-        max-width: 900px;
+        max-width: 980px;
         margin: 0 auto;
-        padding: 32px 18px 60px;
+        padding: 24px 18px 60px;
       }
 
-      .hero {
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.7);
-        border-radius: 0;
-        box-shadow: var(--shadow);
-        padding: 28px;
-        margin-bottom: 22px;
-      }
-
+      .hero,
       .panel {
-        background: var(--card);
+        background: rgba(255, 255, 255, 0.94);
         border: 1px solid var(--border);
         border-radius: 0;
         box-shadow: var(--shadow);
+      }
+
+      .hero {
         padding: 20px;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
+      }
+
+      .panel {
+        padding: 20px;
+        margin-bottom: 18px;
       }
 
       .panel-header {
@@ -65,10 +65,11 @@
 
       .panel-title {
         margin: 0;
-        font-size: 1.35rem;
+        font-size: 1.2rem;
       }
 
-      .count-badge {
+      .count-badge,
+      .mini-badge {
         background: var(--primary-soft);
         color: var(--primary);
         padding: 8px 12px;
@@ -79,21 +80,25 @@
 
       .task-form {
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: minmax(0, 1.6fr) minmax(140px, 0.7fr) minmax(110px, 0.4fr) auto;
         gap: 12px;
+        align-items: stretch;
       }
 
-      input[type="text"] {
+      input[type="text"],
+      select {
         width: 100%;
         border: 1px solid var(--border);
         border-radius: 0;
         padding: 14px 16px;
         font-size: 1rem;
         outline: none;
+        background: white;
         transition: border-color 0.2s, box-shadow 0.2s;
       }
 
-      input[type="text"]:focus {
+      input[type="text"]:focus,
+      select:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
       }
@@ -122,9 +127,55 @@
         min-width: 120px;
       }
 
-      .task-list {
+      .secondary-btn {
+        background: #f3f4f6;
+        color: var(--text);
+      }
+
+      .danger-btn {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+
+      .undo-btn {
+        background: #dcfce7;
+        color: #166534;
+        min-width: 28px;
+      }
+
+      .task-list,
+      .leaderboard-list {
         display: grid;
         gap: 12px;
+      }
+
+      .leaderboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .leader-card {
+        border: 1px solid var(--border);
+        background: white;
+        padding: 14px;
+      }
+
+      .leader-name {
+        font-weight: 800;
+        font-size: 1rem;
+        margin-bottom: 6px;
+      }
+
+      .leader-points {
+        font-size: 1.2rem;
+        font-weight: 900;
+      }
+
+      .leader-meta {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 6px;
       }
 
       .task-item {
@@ -152,12 +203,6 @@
         min-width: 22px;
       }
 
-      .undo-btn {
-        background: #dcfce7;
-        color: #166534;
-        min-width: 28px;
-      }
-
       .task-text {
         min-width: 0;
       }
@@ -167,8 +212,32 @@
         word-break: break-word;
       }
 
+      .task-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .chip {
+        padding: 5px 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid var(--border);
+      }
+
+      .chip.person {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .chip.points {
+        background: var(--amber-soft);
+        color: #b45309;
+      }
+
       .task-meta {
-        margin-top: 4px;
+        margin-top: 8px;
         color: var(--muted);
         font-size: 0.85rem;
       }
@@ -178,16 +247,6 @@
         gap: 8px;
         flex-wrap: wrap;
         justify-content: flex-end;
-      }
-
-      .secondary-btn {
-        background: #f3f4f6;
-        color: var(--text);
-      }
-
-      .danger-btn {
-        background: #fee2e2;
-        color: var(--danger);
       }
 
       .celebration {
@@ -216,7 +275,7 @@
         justify-content: center;
         text-align: center;
         padding: 32px;
-        font-size: clamp(2.2rem, 8vw, 5.5rem);
+        font-size: clamp(2rem, 7vw, 5rem);
         font-weight: 900;
         line-height: 1.05;
         color: white;
@@ -253,6 +312,16 @@
         font-size: 0.92rem;
       }
 
+      @media (max-width: 820px) {
+        .task-form {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .leaderboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 640px) {
         .task-form {
           grid-template-columns: 1fr;
@@ -285,9 +354,33 @@
             maxlength="140"
             required
           />
+          <select id="assigneeInput">
+            <option value="">Who is it for?</option>
+            <option>Douglas</option>
+            <option>Wife</option>
+            <option>Child 1</option>
+            <option>Child 2</option>
+            <option>Everyone</option>
+          </select>
+          <select id="pointsInput">
+            <option value="1">1 point</option>
+            <option value="2">2 points</option>
+            <option value="3">3 points</option>
+            <option value="5" selected>5 points</option>
+            <option value="8">8 points</option>
+            <option value="10">10 points</option>
+          </select>
           <button type="submit" class="primary-btn">Add task</button>
         </form>
         <div id="statusLine" class="status-line">Connecting…</div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Leaderboard</h2>
+          <div class="mini-badge" id="leaderboardSummary">0 points awarded</div>
+        </div>
+        <div id="leaderboard" class="leaderboard-grid"></div>
       </section>
 
       <section class="panel">
@@ -311,9 +404,7 @@
       import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
       const SUPABASE_URL = "https://vsaqwqmrisyehofezolp.supabase.co";
-      const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_B5awAvzLtHLhk-2Lyf_CoQ_Y8R_ZXHo";
-
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_B5awAvzLtHLhk-2Lyf_CoQ_Y8R_ZXHo";
       const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
       const celebrationMessages = [
@@ -337,25 +428,20 @@
         "Mission accomplished! ✅",
         "Household hero mode activated! ⚡",
         "Fantastic work, rock star! 🎸",
-        "On it like a scotch bonner!",
-        "Work it, baby!",
-        "Oh yeah!",
-        "Levelling up!",
-        "Hooray!",
-        "Huzzah!",
-        "Going to the moon!",
-        "Working 9 to 5!",
-        "Oh yeah!",
-        "Sizzling!",
-        "Hardest worker on here!"
+        "Levelling up! 🚀",
+        "Huzzah! 🎊"
       ];
 
       const taskForm = document.getElementById("taskForm");
       const taskInput = document.getElementById("taskInput");
+      const assigneeInput = document.getElementById("assigneeInput");
+      const pointsInput = document.getElementById("pointsInput");
       const todoList = document.getElementById("todoList");
       const doneList = document.getElementById("doneList");
       const todoCount = document.getElementById("todoCount");
       const doneCount = document.getElementById("doneCount");
+      const leaderboard = document.getElementById("leaderboard");
+      const leaderboardSummary = document.getElementById("leaderboardSummary");
       const celebration = document.getElementById("celebration");
       const celebrationText = document.getElementById("celebrationText");
       const statusLine = document.getElementById("statusLine");
@@ -363,7 +449,7 @@
       let tasks = [];
 
       function escapeHtml(value) {
-        return String(value)
+        return String(value ?? "")
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
@@ -381,6 +467,71 @@
         })}`;
       }
 
+      function getTaskPoints(task) {
+        const value = Number(task.points ?? 1);
+        return Number.isFinite(value) && value > 0 ? value : 1;
+      }
+
+      function renderLeaderboard() {
+        const scoreMap = new Map();
+
+        for (const task of tasks) {
+          if (!task.is_done) continue;
+          const person = task.assignee?.trim() || "Unassigned";
+          const existing = scoreMap.get(person) || { points: 0, completed: 0 };
+          existing.points += getTaskPoints(task);
+          existing.completed += 1;
+          scoreMap.set(person, existing);
+        }
+
+        const rows = Array.from(scoreMap.entries())
+          .map(([name, stats]) => ({ name, ...stats }))
+          .sort((a, b) => b.points - a.points || b.completed - a.completed || a.name.localeCompare(b.name));
+
+        const totalPoints = rows.reduce((sum, row) => sum + row.points, 0);
+        leaderboardSummary.textContent = `${totalPoints} point${totalPoints === 1 ? "" : "s"} awarded`;
+
+        leaderboard.innerHTML = rows.length
+          ? rows
+              .map(
+                (row, index) => `
+                  <div class="leader-card">
+                    <div class="leader-name">${index + 1}. ${escapeHtml(row.name)}</div>
+                    <div class="leader-points">${row.points} pts</div>
+                    <div class="leader-meta">${row.completed} task${row.completed === 1 ? "" : "s"} completed</div>
+                  </div>
+                `
+              )
+              .join("")
+          : '<div class="empty-state">No points yet. First completed task wins the opening lead.</div>';
+      }
+
+      function renderTasks(target, rows, emptyText, isDone) {
+        target.innerHTML = rows.length
+          ? rows
+              .map(
+                (task) => `
+              <div class="task-item ${isDone ? "done-item" : ""}" data-id="${task.id}">
+                <button type="button" class="${isDone ? "undo-btn" : "check-btn"}" data-action="${isDone ? "undo" : "complete"}" title="${isDone ? "Move back to outstanding" : "Mark as done"}">${isDone ? "↺" : ""}</button>
+                <div class="task-text">
+                  <div class="task-main">${escapeHtml(task.title)}</div>
+                  <div class="task-badges">
+                    ${task.assignee ? `<span class="chip person">${escapeHtml(task.assignee)}</span>` : ""}
+                    <span class="chip points">${getTaskPoints(task)} pt${getTaskPoints(task) === 1 ? "" : "s"}</span>
+                  </div>
+                  <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
+                </div>
+                <div class="task-actions">
+                  <button type="button" class="secondary-btn" data-action="edit">Edit</button>
+                  <button type="button" class="danger-btn" data-action="delete">Delete</button>
+                </div>
+              </div>
+            `
+              )
+              .join("")
+          : `<div class="empty-state">${emptyText}</div>`;
+      }
+
       function render() {
         const todos = tasks.filter((task) => !task.is_done);
         const done = tasks.filter((task) => task.is_done);
@@ -388,47 +539,9 @@
         todoCount.textContent = `${todos.length} task${todos.length === 1 ? "" : "s"}`;
         doneCount.textContent = `${done.length} done`;
 
-        todoList.innerHTML = todos.length
-          ? todos
-              .map(
-                (task) => `
-            <div class="task-item" data-id="${task.id}">
-              <button type="button" class="check-btn" data-action="complete" title="Mark as done" aria-label="Mark ${escapeHtml(
-                task.title
-              )} as done"></button>
-              <div class="task-text">
-                <div class="task-main">${escapeHtml(task.title)}</div>
-                <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
-              </div>
-              <div class="task-actions">
-                <button type="button" class="secondary-btn" data-action="edit">Edit</button>
-                <button type="button" class="danger-btn" data-action="delete">Delete</button>
-              </div>
-            </div>
-          `
-              )
-              .join("")
-          : '<div class="empty-state">No outstanding tasks.</div>';
-
-        doneList.innerHTML = done.length
-          ? done
-              .map(
-                (task) => `
-            <div class="task-item done-item" data-id="${task.id}">
-              <button type="button" class="undo-btn" data-action="undo" title="Move back to outstanding">↺</button>
-              <div class="task-text">
-                <div class="task-main">${escapeHtml(task.title)}</div>
-                <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
-              </div>
-              <div class="task-actions">
-                <button type="button" class="secondary-btn" data-action="edit">Edit</button>
-                <button type="button" class="danger-btn" data-action="delete">Delete</button>
-              </div>
-            </div>
-          `
-              )
-              .join("")
-          : '<div class="empty-state">Nothing completed yet.</div>';
+        renderTasks(todoList, todos, "No outstanding tasks.", false);
+        renderTasks(doneList, done, "Nothing completed yet.", true);
+        renderLeaderboard();
       }
 
       async function loadTasks() {
@@ -453,13 +566,13 @@
         return true;
       }
 
-      async function addTask(title) {
-        const sortOrder =
-          tasks.filter((t) => !t.is_done).reduce((max, t) => Math.max(max, t.sort_order || 0), 0) +
-          1;
+      async function addTask(title, assignee, points) {
+        const sortOrder = tasks.reduce((max, t) => Math.max(max, Number(t.sort_order) || 0), 0) + 1;
 
         const { error } = await supabase.from("tasks").insert({
           title,
+          assignee: assignee || null,
+          points,
           is_done: false,
           sort_order: sortOrder
         });
@@ -472,6 +585,8 @@
         }
 
         taskInput.value = "";
+        assigneeInput.value = "";
+        pointsInput.value = "5";
         taskInput.blur();
         await loadTasks();
       }
@@ -504,10 +619,11 @@
         return true;
       }
 
-      function showCelebration() {
-        const message =
-          celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
-        celebrationText.textContent = message;
+      function showCelebration(task) {
+        const message = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+        const who = task.assignee?.trim() ? `${task.assignee} ` : "";
+        const points = getTaskPoints(task);
+        celebrationText.innerHTML = `${escapeHtml(message)}<br /><span style="font-size:0.55em; font-weight:800;">${escapeHtml(who)}+${points} point${points === 1 ? "" : "s"}</span>`;
         celebration.classList.add("show");
 
         clearTimeout(showCelebration.hideTimer);
@@ -520,7 +636,9 @@
         event.preventDefault();
         const title = taskInput.value.trim();
         if (!title) return;
-        await addTask(title);
+        const assignee = assigneeInput.value.trim();
+        const points = Number(pointsInput.value) || 1;
+        await addTask(title, assignee, points);
       });
 
       document.addEventListener("click", async (event) => {
@@ -539,7 +657,7 @@
 
         if (action === "complete") {
           const ok = await updateTask(id, { is_done: true });
-          if (ok) showCelebration();
+          if (ok) showCelebration(task);
           return;
         }
 
@@ -549,19 +667,29 @@
         }
 
         if (action === "edit") {
-          const edited = window.prompt("Edit task:", task.title);
-          if (edited === null) return;
-          const trimmed = edited.trim();
-          if (!trimmed) return;
-          await updateTask(id, { title: trimmed });
+          const title = window.prompt("Edit task title:", task.title);
+          if (title === null) return;
+          const trimmedTitle = title.trim();
+          if (!trimmedTitle) return;
+
+          const assignee = window.prompt("Who is this for? Leave blank for none:", task.assignee || "");
+          if (assignee === null) return;
+
+          const points = window.prompt("How many points is it worth?", String(getTaskPoints(task)));
+          if (points === null) return;
+          const parsedPoints = Math.max(1, Number(points) || 1);
+
+          await updateTask(id, {
+            title: trimmedTitle,
+            assignee: assignee.trim() || null,
+            points: parsedPoints
+          });
           return;
         }
 
         if (action === "delete") {
           const confirmed = window.confirm(`Delete this task?\n\n${task.title}`);
-          if (confirmed) {
-            await deleteTask(id);
-          }
+          if (confirmed) await deleteTask(id);
         }
       });
 
