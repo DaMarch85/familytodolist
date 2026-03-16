@@ -204,29 +204,58 @@
       }
 
       .celebration {
-        position: sticky;
-        top: 14px;
-        z-index: 10;
-        margin-bottom: 18px;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         opacity: 0;
-        transform: translateY(-12px);
-        transition: opacity 0.25s ease, transform 0.25s ease;
+        visibility: hidden;
         pointer-events: none;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
       }
 
       .celebration.show {
         opacity: 1;
-        transform: translateY(0);
+        visibility: visible;
       }
 
       .celebration-inner {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        color: white;
-        border-radius: 20px;
-        padding: 14px 16px;
-        box-shadow: var(--shadow);
-        font-weight: 700;
+        min-width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
+        padding: 32px;
+        font-size: clamp(2.2rem, 8vw, 5.5rem);
+        font-weight: 900;
+        line-height: 1.05;
+        color: white;
+        text-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+        animation: celebrationFlash 0.35s linear infinite alternate;
+      }
+
+      @keyframes celebrationFlash {
+        0% {
+          background: linear-gradient(135deg, #4f46e5, #7c3aed);
+          transform: scale(1);
+        }
+        25% {
+          background: linear-gradient(135deg, #16a34a, #06b6d4);
+        }
+        50% {
+          background: linear-gradient(135deg, #f59e0b, #ef4444);
+          transform: scale(1.02);
+        }
+        75% {
+          background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+        100% {
+          background: linear-gradient(135deg, #2563eb, #14b8a6);
+          transform: scale(1);
+        }
       }
 
       .empty-state {
@@ -293,10 +322,6 @@
       </div>
 
       <section class="hero">
-        <h1>Family Task Tracker</h1>
-        <p class="subtitle">
-          Keep family jobs in one place, tick them off, and celebrate every win.
-        </p>
         <form id="taskForm" class="task-form">
           <input
             id="taskInput"
@@ -325,7 +350,7 @@
         <div id="doneList" class="task-list"></div>
       </section>
 
-      <p class="footer-note">Tasks save automatically in this browser.</p>
+      
     </div>
 
     <div id="confetti" class="confetti" aria-hidden="true"></div>
@@ -518,7 +543,7 @@
         clearTimeout(showCelebration.hideTimer);
         showCelebration.hideTimer = setTimeout(() => {
           celebration.classList.remove("show");
-        }, 2200);
+        }, 1800);
       }
 
       function launchConfetti() {
