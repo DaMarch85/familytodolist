@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Family Tasks</title>
+    <title>Family Task Tracker</title>
     <style>
       :root {
         --bg: #f6f7fb;
@@ -12,17 +12,21 @@
         --muted: #6b7280;
         --primary: #4f46e5;
         --primary-soft: #eef2ff;
+        --green: #16a34a;
         --green-soft: #ecfdf5;
         --border: #e5e7eb;
         --danger: #dc2626;
         --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
       body {
         margin: 0;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
         background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 220px);
         color: var(--text);
       }
@@ -30,22 +34,36 @@
       .wrap {
         max-width: 900px;
         margin: 0 auto;
-        padding: 24px 18px 60px;
+        padding: 32px 18px 60px;
       }
 
-      .hero, .panel {
+      .hero {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 0;
+        box-shadow: var(--shadow);
+        padding: 28px;
+        margin-bottom: 22px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.05;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .panel {
         background: var(--card);
         border: 1px solid var(--border);
         border-radius: 0;
         box-shadow: var(--shadow);
-      }
-
-      .hero {
-        padding: 20px;
-        margin-bottom: 22px;
-      }
-
-      .panel {
         padding: 20px;
         margin-bottom: 22px;
       }
@@ -76,6 +94,7 @@
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 12px;
+        margin-top: 12px;
       }
 
       input[type="text"] {
@@ -85,6 +104,7 @@
         padding: 14px 16px;
         font-size: 1rem;
         outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
 
       input[type="text"]:focus {
@@ -99,6 +119,15 @@
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
+        transition: transform 0.12s ease, opacity 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
       }
 
       .primary-btn {
@@ -127,16 +156,14 @@
         background: var(--green-soft);
       }
 
-      .check-btn, .undo-btn {
-        border-radius: 0;
-        min-width: 28px;
-        height: 28px;
-        padding: 0 8px;
-      }
-
       .check-btn {
-        background: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 0;
         border: 2px solid var(--primary);
+        background: white;
+        padding: 0;
+        min-width: 22px;
       }
 
       .undo-btn {
@@ -144,9 +171,20 @@
         color: #166534;
       }
 
-      .task-text { min-width: 0; }
-      .task-main { font-size: 1rem; word-break: break-word; }
-      .task-meta { margin-top: 4px; color: var(--muted); font-size: 0.85rem; }
+      .task-text {
+        min-width: 0;
+      }
+
+      .task-main {
+        font-size: 1rem;
+        word-break: break-word;
+      }
+
+      .task-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
 
       .task-actions {
         display: flex;
@@ -163,13 +201,6 @@
       .danger-btn {
         background: #fee2e2;
         color: var(--danger);
-      }
-
-      .empty-state {
-        border: 1px dashed var(--border);
-        padding: 22px;
-        color: var(--muted);
-        text-align: center;
       }
 
       .celebration {
@@ -207,26 +238,73 @@
       }
 
       @keyframes celebrationFlash {
-        0%   { background: linear-gradient(135deg, #5b6ee1, #7c8fe8); opacity: 0.96; }
-        50%  { background: linear-gradient(135deg, #6bb7c8, #8fd0dc); opacity: 0.92; }
-        100% { background: linear-gradient(135deg, #8a7fe0, #a7a1ea); opacity: 0.96; }
+        0% {
+          background: linear-gradient(135deg, #5b6ee1, #7c8fe8);
+          opacity: 0.96;
+        }
+        50% {
+          background: linear-gradient(135deg, #6bb7c8, #8fd0dc);
+          opacity: 0.92;
+        }
+        100% {
+          background: linear-gradient(135deg, #8a7fe0, #a7a1ea);
+          opacity: 0.96;
+        }
       }
 
-      .status-line {
-        margin-top: 10px;
+      .empty-state {
+        border: 1px dashed var(--border);
+        border-radius: 0;
+        padding: 22px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .footer-note {
+        text-align: center;
         color: var(--muted);
         font-size: 0.9rem;
+        margin-top: 18px;
+      }
+
+      .confetti {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 50;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        top: -12px;
+        width: 10px;
+        height: 14px;
+        border-radius: 3px;
+        opacity: 0.9;
+        animation: fall linear forwards;
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(110vh) rotate(720deg);
+          opacity: 0.25;
+        }
       }
 
       @media (max-width: 640px) {
-        .task-form { grid-template-columns: 1fr; }
+        .task-form {
+          grid-template-columns: 1fr;
+        }
 
-        .task-item { grid-template-columns: auto 1fr; }
+        .task-item {
+          grid-template-columns: auto 1fr;
+        }
 
         .task-actions {
           grid-column: 1 / -1;
           justify-content: flex-start;
-          margin-left: 40px;
+          margin-left: 34px;
         }
       }
     </style>
@@ -242,13 +320,12 @@
           <input
             id="taskInput"
             type="text"
-            placeholder="Add a task"
+            placeholder="Add a task, for example: Tidy playroom"
             maxlength="140"
             required
           />
           <button type="submit" class="primary-btn">Add task</button>
         </form>
-        <div class="status-line" id="statusLine">Connecting…</div>
       </section>
 
       <section class="panel">
@@ -266,15 +343,14 @@
         </div>
         <div id="doneList" class="task-list"></div>
       </section>
+
+      
     </div>
 
-    <script type="module">
-      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
 
-      const SUPABASE_URL = "https://vsaqwqmrisyehofezolp.supabase.co";
-      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_B5awAvzLtHLhk-2Lyf_CoQ_Y8R_ZXHo";
-
-      const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    <script>
+      const STORAGE_KEY = "family-task-tracker-v1";
 
       const celebrationMessages = [
         "Well done! 🌟",
@@ -307,17 +383,49 @@
       const doneCount = document.getElementById("doneCount");
       const celebration = document.getElementById("celebration");
       const celebrationText = document.getElementById("celebrationText");
-      const statusLine = document.getElementById("statusLine");
+      const confetti = document.getElementById("confetti");
 
-      let tasks = [];
+      let state = loadState();
 
-      function escapeHtml(value) {
-        return value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
+      function createDefaultState() {
+        return {
+          tasks: [
+            {
+              id: crypto.randomUUID(),
+              text: "Put school bags by the door",
+              done: false,
+              updatedAt: new Date().toISOString()
+            },
+            {
+              id: crypto.randomUUID(),
+              text: "Feed the cat",
+              done: false,
+              updatedAt: new Date().toISOString()
+            },
+            {
+              id: crypto.randomUUID(),
+              text: "Water the plants",
+              done: true,
+              updatedAt: new Date().toISOString()
+            }
+          ]
+        };
+      }
+
+      function loadState() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return createDefaultState();
+          const parsed = JSON.parse(saved);
+          if (!parsed || !Array.isArray(parsed.tasks)) return createDefaultState();
+          return parsed;
+        } catch {
+          return createDefaultState();
+        }
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
       function formatUpdatedAt(iso) {
@@ -330,100 +438,94 @@
         })}`;
       }
 
+      function escapeHtml(value) {
+        return value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
       function render() {
-        const todos = tasks.filter((task) => !task.is_done);
-        const done = tasks.filter((task) => task.is_done);
+        const todos = state.tasks.filter((task) => !task.done);
+        const done = state.tasks.filter((task) => task.done);
 
         todoCount.textContent = `${todos.length} task${todos.length === 1 ? "" : "s"}`;
         doneCount.textContent = `${done.length} done`;
 
         todoList.innerHTML = todos.length
-          ? todos.map((task) => `
-            <div class="task-item" data-id="${task.id}">
-              <button class="check-btn" data-action="complete" aria-label="Mark as done"></button>
-              <div class="task-text">
-                <div class="task-main">${escapeHtml(task.title)}</div>
-                <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
+          ? todos
+              .map(
+                (task) => `
+              <div class="task-item" data-id="${task.id}">
+                <button class="check-btn" data-action="complete" title="Mark as done" aria-label="Mark ${escapeHtml(
+                  task.text
+                )} as done"></button>
+                <div class="task-text">
+                  <div class="task-main">${escapeHtml(task.text)}</div>
+                  <div class="task-meta">${formatUpdatedAt(task.updatedAt)}</div>
+                </div>
+                <div class="task-actions">
+                  <button class="secondary-btn" data-action="edit">Edit</button>
+                  <button class="danger-btn" data-action="delete">Delete</button>
+                </div>
               </div>
-              <div class="task-actions">
-                <button class="secondary-btn" data-action="edit">Edit</button>
-                <button class="danger-btn" data-action="delete">Delete</button>
-              </div>
-            </div>
-          `).join("")
-          : '<div class="empty-state">No outstanding tasks.</div>';
+            `
+              )
+              .join("")
+          : '<div class="empty-state">No outstanding tasks. Time for a biscuit.</div>';
 
         doneList.innerHTML = done.length
-          ? done.map((task) => `
-            <div class="task-item done-item" data-id="${task.id}">
-              <button class="undo-btn" data-action="undo" title="Move back">↺</button>
-              <div class="task-text">
-                <div class="task-main">${escapeHtml(task.title)}</div>
-                <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
+          ? done
+              .map(
+                (task) => `
+              <div class="task-item done-item" data-id="${task.id}">
+                <button class="undo-btn" data-action="undo" title="Move back to outstanding">↺</button>
+                <div class="task-text">
+                  <div class="task-main">${escapeHtml(task.text)}</div>
+                  <div class="task-meta">${formatUpdatedAt(task.updatedAt)}</div>
+                </div>
+                <div class="task-actions">
+                  <button class="secondary-btn" data-action="edit">Edit</button>
+                  <button class="danger-btn" data-action="delete">Delete</button>
+                </div>
               </div>
-              <div class="task-actions">
-                <button class="secondary-btn" data-action="edit">Edit</button>
-                <button class="danger-btn" data-action="delete">Delete</button>
-              </div>
-            </div>
-          `).join("")
-          : '<div class="empty-state">Nothing completed yet.</div>';
+            `
+              )
+              .join("")
+          : '<div class="empty-state">Nothing completed yet. First win coming up.</div>';
       }
 
-      async function loadTasks() {
-        statusLine.textContent = "Loading tasks…";
-        const { data, error } = await supabase
-          .from("tasks")
-          .select("*")
-          .order("is_done", { ascending: true })
-          .order("sort_order", { ascending: true })
-          .order("created_at", { ascending: true });
-
-        if (error) {
-          console.error(error);
-          statusLine.textContent = "Could not load tasks.";
-          return;
-        }
-
-        tasks = data ?? [];
-        render();
-        statusLine.textContent = "Connected.";
-      }
-
-      async function addTask(title) {
-        const sortOrder =
-          tasks.filter((t) => !t.is_done).reduce((max, t) => Math.max(max, t.sort_order || 0), 0) + 1;
-
-        const { error } = await supabase.from("tasks").insert({
-          title,
-          is_done: false,
-          sort_order: sortOrder
+      function addTask(text) {
+        state.tasks.unshift({
+          id: crypto.randomUUID(),
+          text,
+          done: false,
+          updatedAt: new Date().toISOString()
         });
-
-        if (error) {
-          console.error(error);
-          alert("Could not add task.");
-          return;
-        }
-
-        taskInput.value = "";
-        taskInput.blur();
+        saveState();
+        render();
       }
 
-      async function updateTask(id, changes) {
-        const { error } = await supabase.from("tasks").update(changes).eq("id", id);
-        if (error) {
-          console.error(error);
-          alert("Could not update task.");
-        }
+      function updateTask(id, changes) {
+        state.tasks = state.tasks.map((task) =>
+          task.id === id
+            ? {
+                ...task,
+                ...changes,
+                updatedAt: new Date().toISOString()
+              }
+            : task
+        );
+        saveState();
+        render();
       }
 
-      async function deleteTask(id) {
-        const { error } = await supabase.from("tasks").delete().eq("id", id);
-        if (error) {
-          console.error(error);
-          alert("Could not delete task.");
-        }
+      function deleteTask(id) {
+        state.tasks = state.tasks.filter((task) => task.id !== id);
+        saveState();
+        render();
       }
 
       function showCelebration() {
@@ -431,72 +533,82 @@
           celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
         celebrationText.textContent = message;
         celebration.classList.add("show");
+        launchConfetti();
         clearTimeout(showCelebration.hideTimer);
         showCelebration.hideTimer = setTimeout(() => {
           celebration.classList.remove("show");
         }, 1800);
       }
 
-      taskForm.addEventListener("submit", async (event) => {
+      function launchConfetti() {
+        confetti.innerHTML = "";
+        const colors = ["#4f46e5", "#16a34a", "#f59e0b", "#ec4899", "#06b6d4", "#8b5cf6"];
+
+        for (let i = 0; i < 28; i += 1) {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDuration = `${2.2 + Math.random() * 1.8}s`;
+          piece.style.transform = `translateY(0) rotate(${Math.random() * 180}deg)`;
+          confetti.appendChild(piece);
+        }
+
+        clearTimeout(launchConfetti.clearTimer);
+        launchConfetti.clearTimer = setTimeout(() => {
+          confetti.innerHTML = "";
+        }, 4200);
+      }
+
+      taskForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const title = taskInput.value.trim();
-        if (!title) return;
-        await addTask(title);
+        const text = taskInput.value.trim();
+        if (!text) return;
+        addTask(text);
+        taskInput.value = "";
+        taskInput.blur();
       });
 
-      document.addEventListener("click", async (event) => {
+      document.addEventListener("click", (event) => {
         const target = event.target;
         if (!(target instanceof HTMLElement)) return;
 
         const action = target.dataset.action;
         if (!action) return;
 
-        const row = target.closest("[data-id]");
-        if (!row) return;
-
-        const id = row.getAttribute("data-id");
-        const task = tasks.find((t) => t.id === id);
+        const taskElement = target.closest("[data-id]");
+        if (!taskElement) return;
+        const id = taskElement.getAttribute("data-id");
+        const task = state.tasks.find((item) => item.id === id);
         if (!task) return;
 
         if (action === "complete") {
-          await updateTask(id, { is_done: true });
+          updateTask(id, { done: true });
           showCelebration();
           return;
         }
 
         if (action === "undo") {
-          await updateTask(id, { is_done: false });
+          updateTask(id, { done: false });
           return;
         }
 
         if (action === "edit") {
-          const edited = window.prompt("Edit task:", task.title);
+          const edited = window.prompt("Edit task:", task.text);
           if (edited === null) return;
           const trimmed = edited.trim();
           if (!trimmed) return;
-          await updateTask(id, { title: trimmed });
+          updateTask(id, { text: trimmed });
           return;
         }
 
         if (action === "delete") {
-          const confirmed = window.confirm(`Delete this task?\n\n${task.title}`);
-          if (!confirmed) return;
-          await deleteTask(id);
+          const confirmed = window.confirm(`Delete this task?\n\n${task.text}`);
+          if (confirmed) deleteTask(id);
         }
       });
 
-      supabase
-        .channel("tasks-realtime")
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "tasks" },
-          async () => {
-            await loadTasks();
-          }
-        )
-        .subscribe();
-
-      await loadTasks();
+      render();
     </script>
   </body>
 </html>
