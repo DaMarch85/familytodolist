@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family Task Tracker</title>
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --primary: #4f46e5;
+        --primary-soft: #eef2ff;
+        --green: #16a34a;
+        --green-soft: #ecfdf5;
+        --border: #e5e7eb;
+        --danger: #dc2626;
+        --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 220px);
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 18px 60px;
+      }
+
+      .hero {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 28px;
+        margin-bottom: 22px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.05;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        margin-bottom: 22px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 1.35rem;
+      }
+
+      .count-badge {
+        background: var(--primary-soft);
+        color: var(--primary);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .task-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px 16px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+      }
+
+      button {
+        border: 0;
+        border-radius: 16px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.12s ease, opacity 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .primary-btn {
+        background: var(--primary);
+        color: white;
+        min-width: 120px;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .task-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .done-item {
+        background: var(--green-soft);
+      }
+
+      .check-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        background: white;
+        padding: 0;
+        min-width: 22px;
+      }
+
+      .undo-btn {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .task-text {
+        min-width: 0;
+      }
+
+      .task-main {
+        font-size: 1rem;
+        word-break: break-word;
+      }
+
+      .task-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .secondary-btn {
+        background: #f3f4f6;
+        color: var(--text);
+      }
+
+      .danger-btn {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+
+      .celebration {
+        position: sticky;
+        top: 14px;
+        z-index: 10;
+        margin-bottom: 18px;
+        opacity: 0;
+        transform: translateY(-12px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        pointer-events: none;
+      }
+
+      .celebration.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .celebration-inner {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        border-radius: 20px;
+        padding: 14px 16px;
+        box-shadow: var(--shadow);
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .empty-state {
+        border: 1px dashed var(--border);
+        border-radius: 18px;
+        padding: 22px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .footer-note {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 18px;
+      }
+
+      .confetti {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 50;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        top: -12px;
+        width: 10px;
+        height: 14px;
+        border-radius: 3px;
+        opacity: 0.9;
+        animation: fall linear forwards;
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(110vh) rotate(720deg);
+          opacity: 0.25;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .task-form {
+          grid-template-columns: 1fr;
+        }
+
+        .task-item {
+          grid-template-columns: auto 1fr;
+        }
+
+        .task-actions {
+          grid-column: 1 / -1;
+          justify-content: flex-start;
+          margin-left: 34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="celebration" class="celebration" aria-live="polite">
+        <div class="celebration-inner" id="celebrationText"></div>
+      </div>
+
+      <section class="hero">
+        <h1>Family Task Tracker</h1>
+        <p class="subtitle">
+          Keep family jobs in one place, tick them off, and celebrate every win.
+        </p>
+        <form id="taskForm" class="task-form">
+          <input
+            id="taskInput"
+            type="text"
+            placeholder="Add a task, for example: Tidy playroom"
+            maxlength="140"
+            required
+          />
+          <button type="submit" class="primary-btn">Add task</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Outstanding tasks</h2>
+          <div class="count-badge" id="todoCount">0</div>
+        </div>
+        <div id="todoList" class="task-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Done list</h2>
+          <div class="count-badge" id="doneCount">0</div>
+        </div>
+        <div id="doneList" class="task-list"></div>
+      </section>
+
+      <p class="footer-note">Tasks save automatically in this browser.</p>
+    </div>
+
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+    <script>
+      const STORAGE_KEY = "family-task-tracker-v1";
+
+      const celebrationMessages = [
+        "Well done! 🌟",
+        "Congratulations, task champion! 🎉",
+        "You're a superstar! ⭐",
+        "Boom. Another one done! 💥",
+        "Amazing work, family hero! 🦸",
+        "High five! 🙌",
+        "Gold star energy! 🌠",
+        "That was brilliant! 🥳",
+        "You smashed it! 🚀",
+        "Super teamwork! 🤝",
+        "Victory unlocked! 🏆",
+        "Nice one! Keep going! 😄",
+        "Task complete like a legend! 👑",
+        "Outstanding effort! 🌈",
+        "That deserves a happy dance! 💃",
+        "Look at you getting things done! 😎",
+        "Top job! 🍀",
+        "Mission accomplished! ✅",
+        "Household hero mode activated! ⚡",
+        "Fantastic work, rock star! 🎸"
+      ];
+
+      const taskForm = document.getElementById("taskForm");
+      const taskInput = document.getElementById("taskInput");
+      const todoList = document.getElementById("todoList");
+      const doneList = document.getElementById("doneList");
+      const todoCount = document.getElementById("todoCount");
+      const doneCount = document.getElementById("doneCount");
+      const celebration = document.getElementById("celebration");
+      const celebrationText = document.getElementById("celebrationText");
+      const confetti = document.getElementById("confetti");
+
+      let state = loadState();
+
+      function createDefaultState() {
+        return {
+          tasks: [
+            {
+              id: crypto.randomUUID(),
+              text: "Put school bags by the door",
+              done: false,
+              updatedAt: new Date().toISOString()
+            },
+            {
+              id: crypto.randomUUID(),
+              text: "Feed the cat",
+              done: false,
+              updatedAt: new Date().toISOString()
+            },
+            {
+              id: crypto.randomUUID(),
+              text: "Water the plants",
+              done: true,
+              updatedAt: new Date().toISOString()
+            }
+          ]
+        };
+      }
+
+      function loadState() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return createDefaultState();
+          const parsed = JSON.parse(saved);
+          if (!parsed || !Array.isArray(parsed.tasks)) return createDefaultState();
+          return parsed;
+        } catch {
+          return createDefaultState();
+        }
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function formatUpdatedAt(iso) {
+        const date = new Date(iso);
+        return `Last updated: ${date.toLocaleString([], {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        })}`;
+      }
+
+      function escapeHtml(value) {
+        return value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function render() {
+        const todos = state.tasks.filter((task) => !task.done);
+        const done = state.tasks.filter((task) => task.done);
+
+        todoCount.textContent = `${todos.length} task${todos.length === 1 ? "" : "s"}`;
+        doneCount.textContent = `${done.length} done`;
+
+        todoList.innerHTML = todos.length
+          ? todos
+              .map(
+                (task) => `
+              <div class="task-item" data-id="${task.id}">
+                <button class="check-btn" data-action="complete" title="Mark as done" aria-label="Mark ${escapeHtml(
+                  task.text
+                )} as done"></button>
+                <div class="task-text">
+                  <div class="task-main">${escapeHtml(task.text)}</div>
+                  <div class="task-meta">${formatUpdatedAt(task.updatedAt)}</div>
+                </div>
+                <div class="task-actions">
+                  <button class="secondary-btn" data-action="edit">Edit</button>
+                  <button class="danger-btn" data-action="delete">Delete</button>
+                </div>
+              </div>
+            `
+              )
+              .join("")
+          : '<div class="empty-state">No outstanding tasks. Time for a biscuit.</div>';
+
+        doneList.innerHTML = done.length
+          ? done
+              .map(
+                (task) => `
+              <div class="task-item done-item" data-id="${task.id}">
+                <button class="undo-btn" data-action="undo" title="Move back to outstanding">↺</button>
+                <div class="task-text">
+                  <div class="task-main">${escapeHtml(task.text)}</div>
+                  <div class="task-meta">${formatUpdatedAt(task.updatedAt)}</div>
+                </div>
+                <div class="task-actions">
+                  <button class="secondary-btn" data-action="edit">Edit</button>
+                  <button class="danger-btn" data-action="delete">Delete</button>
+                </div>
+              </div>
+            `
+              )
+              .join("")
+          : '<div class="empty-state">Nothing completed yet. First win coming up.</div>';
+      }
+
+      function addTask(text) {
+        state.tasks.unshift({
+          id: crypto.randomUUID(),
+          text,
+          done: false,
+          updatedAt: new Date().toISOString()
+        });
+        saveState();
+        render();
+      }
+
+      function updateTask(id, changes) {
+        state.tasks = state.tasks.map((task) =>
+          task.id === id
+            ? {
+                ...task,
+                ...changes,
+                updatedAt: new Date().toISOString()
+              }
+            : task
+        );
+        saveState();
+        render();
+      }
+
+      function deleteTask(id) {
+        state.tasks = state.tasks.filter((task) => task.id !== id);
+        saveState();
+        render();
+      }
+
+      function showCelebration() {
+        const message =
+          celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+        celebrationText.textContent = message;
+        celebration.classList.add("show");
+        launchConfetti();
+        clearTimeout(showCelebration.hideTimer);
+        showCelebration.hideTimer = setTimeout(() => {
+          celebration.classList.remove("show");
+        }, 2200);
+      }
+
+      function launchConfetti() {
+        confetti.innerHTML = "";
+        const colors = ["#4f46e5", "#16a34a", "#f59e0b", "#ec4899", "#06b6d4", "#8b5cf6"];
+
+        for (let i = 0; i < 28; i += 1) {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDuration = `${2.2 + Math.random() * 1.8}s`;
+          piece.style.transform = `translateY(0) rotate(${Math.random() * 180}deg)`;
+          confetti.appendChild(piece);
+        }
+
+        clearTimeout(launchConfetti.clearTimer);
+        launchConfetti.clearTimer = setTimeout(() => {
+          confetti.innerHTML = "";
+        }, 4200);
+      }
+
+      taskForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = taskInput.value.trim();
+        if (!text) return;
+        addTask(text);
+        taskInput.value = "";
+        taskInput.focus();
+      });
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        const action = target.dataset.action;
+        if (!action) return;
+
+        const taskElement = target.closest("[data-id]");
+        if (!taskElement) return;
+        const id = taskElement.getAttribute("data-id");
+        const task = state.tasks.find((item) => item.id === id);
+        if (!task) return;
+
+        if (action === "complete") {
+          updateTask(id, { done: true });
+          showCelebration();
+          return;
+        }
+
+        if (action === "undo") {
+          updateTask(id, { done: false });
+          return;
+        }
+
+        if (action === "edit") {
+          const edited = window.prompt("Edit task:", task.text);
+          if (edited === null) return;
+          const trimmed = edited.trim();
+          if (!trimmed) return;
+          updateTask(id, { text: trimmed });
+          return;
+        }
+
+        if (action === "delete") {
+          const confirmed = window.confirm(`Delete this task?\n\n${task.text}`);
+          if (confirmed) deleteTask(id);
+        }
+      });
+
+      render();
+    </script>
+  </body>
+</html>
