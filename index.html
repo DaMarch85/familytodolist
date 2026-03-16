@@ -41,7 +41,7 @@
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.7);
-        border-radius: 28px;
+        border-radius: 0;
         box-shadow: var(--shadow);
         padding: 28px;
         margin-bottom: 22px;
@@ -62,7 +62,7 @@
       .panel {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 24px;
+        border-radius: 0;
         box-shadow: var(--shadow);
         padding: 20px;
         margin-bottom: 22px;
@@ -85,7 +85,7 @@
         background: var(--primary-soft);
         color: var(--primary);
         padding: 8px 12px;
-        border-radius: 999px;
+        border-radius: 0;
         font-weight: 700;
         font-size: 0.9rem;
       }
@@ -100,7 +100,7 @@
       input[type="text"] {
         width: 100%;
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 0;
         padding: 14px 16px;
         font-size: 1rem;
         outline: none;
@@ -114,7 +114,7 @@
 
       button {
         border: 0;
-        border-radius: 16px;
+        border-radius: 0;
         padding: 12px 16px;
         font-size: 0.95rem;
         font-weight: 700;
@@ -147,7 +147,7 @@
         gap: 12px;
         align-items: center;
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: 0;
         padding: 14px;
         background: #fff;
       }
@@ -159,7 +159,7 @@
       .check-btn {
         width: 22px;
         height: 22px;
-        border-radius: 50%;
+        border-radius: 0;
         border: 2px solid var(--primary);
         background: white;
         padding: 0;
@@ -234,33 +234,27 @@
         line-height: 1.05;
         color: white;
         text-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
-        animation: celebrationFlash 0.35s linear infinite alternate;
+        animation: celebrationFlash 0.9s ease-in-out infinite alternate;
       }
 
       @keyframes celebrationFlash {
         0% {
-          background: linear-gradient(135deg, #4f46e5, #7c3aed);
-          transform: scale(1);
-        }
-        25% {
-          background: linear-gradient(135deg, #16a34a, #06b6d4);
+          background: linear-gradient(135deg, #5b6ee1, #7c8fe8);
+          opacity: 0.96;
         }
         50% {
-          background: linear-gradient(135deg, #f59e0b, #ef4444);
-          transform: scale(1.02);
-        }
-        75% {
-          background: linear-gradient(135deg, #ec4899, #8b5cf6);
+          background: linear-gradient(135deg, #6bb7c8, #8fd0dc);
+          opacity: 0.92;
         }
         100% {
-          background: linear-gradient(135deg, #2563eb, #14b8a6);
-          transform: scale(1);
+          background: linear-gradient(135deg, #8a7fe0, #a7a1ea);
+          opacity: 0.96;
         }
       }
 
       .empty-state {
         border: 1px dashed var(--border);
-        border-radius: 18px;
+        border-radius: 0;
         padding: 22px;
         color: var(--muted);
         text-align: center;
@@ -572,7 +566,7 @@
         if (!text) return;
         addTask(text);
         taskInput.value = "";
-        taskInput.focus();
+        taskInput.blur();
       });
 
       document.addEventListener("click", (event) => {
