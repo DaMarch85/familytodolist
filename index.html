@@ -138,14 +138,16 @@
         background: #fdf2f8;
         color: #be185d;
         border: 1px solid #fbcfe8;
-        min-width: 110px;
+        width: 180px;
+        padding: 16px 12px;
       }
 
       .man-btn {
         background: #eff6ff;
         color: #1d4ed8;
         border: 1px solid #bfdbfe;
-        min-width: 110px;
+        width: 180px;
+        padding: 16px 12px;
       }
 
       .undo-btn {
@@ -184,14 +186,14 @@
       }
 
       .task-item {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-        justify-items: center;
+        display: flex;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        gap: 12px;
         border: 1px solid var(--border);
         border-radius: 0;
-        padding: 14px;
+        padding: 18px 16px;
         background: #fff;
         text-align: center;
       }
@@ -215,13 +217,19 @@
       }
 
       .task-text {
-        min-width: 0;
         width: 100%;
+        max-width: 560px;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
       }
 
       .task-main {
-        font-size: 1.15rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1.2;
         word-break: break-word;
         text-align: center;
       }
@@ -243,11 +251,12 @@
 
       .task-links {
         display: flex;
-        gap: 16px;
-        margin-top: 10px;
+        gap: 28px;
         justify-content: center;
         align-items: center;
-        width: 100%;
+        width: auto;
+        max-width: none;
+        margin: 0 auto;
       }
 
       .link-btn {
@@ -255,7 +264,7 @@
         color: #111827;
         border: 0;
         padding: 0;
-        font-size: 0.92rem;
+        font-size: 1rem;
         font-weight: 500;
         text-decoration: none;
       }
@@ -266,13 +275,13 @@
       }
 
       .complete-actions {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
+        display: inline-grid;
+        grid-template-columns: repeat(2, minmax(120px, 180px));
+        gap: 16px;
+        width: auto;
+        max-width: none;
+        margin: 4px auto 0;
         justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin-top: 12px;
       }
 
       .complete-actions {
@@ -356,10 +365,22 @@
           grid-template-columns: 1fr;
         }
 
+        .complete-actions {
+          grid-template-columns: repeat(2, minmax(110px, 1fr));
+          gap: 12px;
+          width: 100%;
+          max-width: 480px;
+        }
+
+        .woman-btn,
+        .man-btn {
+          width: 100%;
+        }
+
         .complete-actions,
         .task-actions,
         .task-links {
-          justify-content: flex-start;
+          justify-content: center;
         }
       }
     </style>
