@@ -138,12 +138,14 @@
         background: #fdf2f8;
         color: #be185d;
         border: 1px solid #fbcfe8;
+        min-width: 110px;
       }
 
       .man-btn {
         background: #eff6ff;
         color: #1d4ed8;
         border: 1px solid #bfdbfe;
+        min-width: 110px;
       }
 
       .undo-btn {
@@ -212,11 +214,13 @@
 
       .task-text {
         min-width: 0;
+        text-align: center;
       }
 
       .task-main {
-        font-size: 1rem;
+        font-size: 1.15rem;
         word-break: break-word;
+        text-align: center;
       }
 
       .task-meta {
@@ -228,13 +232,15 @@
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: center;
+        margin-top: 10px;
       }
 
       .task-links {
         display: flex;
-        gap: 14px;
+        gap: 16px;
         margin-top: 10px;
+        justify-content: center;
       }
 
       .link-btn {
@@ -254,9 +260,10 @@
 
       .complete-actions {
         display: flex;
-        gap: 8px;
+        gap: 20px;
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: center;
+        margin-top: 12px;
       }
 
       .complete-actions {
@@ -341,6 +348,11 @@
         }
 
         .complete-actions,
+        .task-actions,
+        .task-links {
+          justify-content: flex-start;
+        }
+      }
     </style>
   </head>
   <body>
@@ -743,7 +755,11 @@ ${task.title}`);
             await loadScoreboard();
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          if (status === "SUBSCRIBED") {
+            statusLine.textContent = "Connected.";
+          }
+        });
 
       await ensureScoreboardRow();
       await loadScoreboard();
