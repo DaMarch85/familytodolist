@@ -13,7 +13,6 @@
         --primary: #4f46e5;
         --primary-soft: #eef2ff;
         --green-soft: #ecfdf5;
-        --amber-soft: #fff7ed;
         --border: #e5e7eb;
         --danger: #dc2626;
         --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
@@ -80,13 +79,12 @@
 
       .task-form {
         display: grid;
-        grid-template-columns: minmax(0, 1.6fr) minmax(140px, 0.7fr) minmax(110px, 0.4fr) auto;
+        grid-template-columns: 1fr auto;
         gap: 12px;
         align-items: stretch;
       }
 
-      input[type="text"],
-      select {
+      input[type="text"] {
         width: 100%;
         border: 1px solid var(--border);
         border-radius: 0;
@@ -97,8 +95,7 @@
         transition: border-color 0.2s, box-shadow 0.2s;
       }
 
-      input[type="text"]:focus,
-      select:focus {
+      input[type="text"]:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
       }
@@ -137,45 +134,55 @@
         color: var(--danger);
       }
 
+      .woman-btn {
+        background: #fdf2f8;
+        color: #be185d;
+        border: 1px solid #fbcfe8;
+      }
+
+      .man-btn {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
       .undo-btn {
         background: #dcfce7;
         color: #166534;
-        min-width: 28px;
       }
 
       .task-list,
-      .leaderboard-list {
+      .score-grid {
         display: grid;
         gap: 12px;
       }
 
-      .leaderboard-grid {
-        display: grid;
+      .score-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
       }
 
-      .leader-card {
+      .score-card {
         border: 1px solid var(--border);
         background: white;
-        padding: 14px;
+        padding: 16px;
       }
 
-      .leader-name {
-        font-weight: 800;
-        font-size: 1rem;
-        margin-bottom: 6px;
+      .score-label {
+        font-size: 0.92rem;
+        color: var(--muted);
+        margin-bottom: 8px;
       }
 
-      .leader-points {
-        font-size: 1.2rem;
+      .score-value {
+        font-size: 2rem;
         font-weight: 900;
+        line-height: 1;
       }
 
-      .leader-meta {
+      .score-subtext {
+        margin-top: 8px;
         color: var(--muted);
         font-size: 0.85rem;
-        margin-top: 6px;
       }
 
       .task-item {
@@ -193,14 +200,18 @@
         background: var(--green-soft);
       }
 
-      .check-btn {
-        width: 22px;
-        height: 22px;
-        border-radius: 0;
-        border: 2px solid var(--primary);
-        background: white;
-        padding: 0;
-        min-width: 22px;
+      .done-by {
+        margin-top: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .done-by.woman {
+        color: #be185d;
+      }
+
+      .done-by.man {
+        color: #1d4ed8;
       }
 
       .task-text {
@@ -212,30 +223,6 @@
         word-break: break-word;
       }
 
-      .task-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
-      }
-
-      .chip {
-        padding: 5px 8px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        border: 1px solid var(--border);
-      }
-
-      .chip.person {
-        background: var(--primary-soft);
-        color: var(--primary);
-      }
-
-      .chip.points {
-        background: var(--amber-soft);
-        color: #b45309;
-      }
-
       .task-meta {
         margin-top: 8px;
         color: var(--muted);
@@ -243,6 +230,13 @@
       }
 
       .task-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .complete-actions {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
@@ -313,11 +307,7 @@
       }
 
       @media (max-width: 820px) {
-        .task-form {
-          grid-template-columns: 1fr 1fr;
-        }
-
-        .leaderboard-grid {
+        .score-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -328,13 +318,12 @@
         }
 
         .task-item {
-          grid-template-columns: auto 1fr;
+          grid-template-columns: 1fr;
         }
 
+        .complete-actions,
         .task-actions {
-          grid-column: 1 / -1;
           justify-content: flex-start;
-          margin-left: 34px;
         }
       }
     </style>
@@ -354,22 +343,6 @@
             maxlength="140"
             required
           />
-          <select id="assigneeInput">
-            <option value="">Who is it for?</option>
-            <option>Douglas</option>
-            <option>Wife</option>
-            <option>Child 1</option>
-            <option>Child 2</option>
-            <option>Everyone</option>
-          </select>
-          <select id="pointsInput">
-            <option value="1">1 point</option>
-            <option value="2">2 points</option>
-            <option value="3">3 points</option>
-            <option value="5" selected>5 points</option>
-            <option value="8">8 points</option>
-            <option value="10">10 points</option>
-          </select>
           <button type="submit" class="primary-btn">Add task</button>
         </form>
         <div id="statusLine" class="status-line">Connecting…</div>
@@ -377,10 +350,26 @@
 
       <section class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">Leaderboard</h2>
-          <div class="mini-badge" id="leaderboardSummary">0 points awarded</div>
+          <h2 class="panel-title">Scoreboard</h2>
+          <button type="button" id="resetScoresBtn" class="secondary-btn">Reset scoreboard</button>
         </div>
-        <div id="leaderboard" class="leaderboard-grid"></div>
+        <div class="score-grid">
+          <div class="score-card">
+            <div class="score-label">Woman</div>
+            <div id="womanScore" class="score-value">0</div>
+            <div class="score-subtext">Tasks completed by a woman</div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Man</div>
+            <div id="manScore" class="score-value">0</div>
+            <div class="score-subtext">Tasks completed by a man</div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Total this round</div>
+            <div id="totalScore" class="score-value">0</div>
+            <div id="resetAtText" class="score-subtext">Not reset yet</div>
+          </div>
+        </div>
       </section>
 
       <section class="panel">
@@ -409,44 +398,38 @@
 
       const celebrationMessages = [
         "Well done! 🌟",
-        "Congratulations, task champion! 🎉",
+        "Congratulations! 🎉",
         "You're a superstar! ⭐",
         "Boom. Another one done! 💥",
-        "Amazing work, family hero! 🦸",
+        "Amazing work! 🦸",
         "High five! 🙌",
-        "Gold star energy! 🌠",
         "That was brilliant! 🥳",
         "You smashed it! 🚀",
-        "Super teamwork! 🤝",
         "Victory unlocked! 🏆",
-        "Nice one! Keep going! 😄",
-        "Task complete like a legend! 👑",
-        "Outstanding effort! 🌈",
-        "That deserves a happy dance! 💃",
-        "Look at you getting things done! 😎",
-        "Top job! 🍀",
-        "Mission accomplished! ✅",
-        "Household hero mode activated! ⚡",
-        "Fantastic work, rock star! 🎸",
-        "Levelling up! 🚀",
-        "Huzzah! 🎊"
+        "Mission accomplished! ✅"
       ];
 
       const taskForm = document.getElementById("taskForm");
       const taskInput = document.getElementById("taskInput");
-      const assigneeInput = document.getElementById("assigneeInput");
-      const pointsInput = document.getElementById("pointsInput");
       const todoList = document.getElementById("todoList");
       const doneList = document.getElementById("doneList");
       const todoCount = document.getElementById("todoCount");
       const doneCount = document.getElementById("doneCount");
-      const leaderboard = document.getElementById("leaderboard");
-      const leaderboardSummary = document.getElementById("leaderboardSummary");
+      const womanScore = document.getElementById("womanScore");
+      const manScore = document.getElementById("manScore");
+      const totalScore = document.getElementById("totalScore");
+      const resetAtText = document.getElementById("resetAtText");
+      const resetScoresBtn = document.getElementById("resetScoresBtn");
       const celebration = document.getElementById("celebration");
       const celebrationText = document.getElementById("celebrationText");
       const statusLine = document.getElementById("statusLine");
 
       let tasks = [];
+      let scoreboardState = {
+        woman_score: 0,
+        man_score: 0,
+        last_reset_at: null
+      };
 
       function escapeHtml(value) {
         return String(value ?? "")
@@ -455,6 +438,17 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
+      }
+
+      function formatDateTime(iso) {
+        if (!iso) return "Not reset yet";
+        const date = new Date(iso);
+        return `Last reset: ${date.toLocaleString([], {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        })}`;
       }
 
       function formatUpdatedAt(iso) {
@@ -467,43 +461,60 @@
         })}`;
       }
 
-      function getTaskPoints(task) {
-        const value = Number(task.points ?? 1);
-        return Number.isFinite(value) && value > 0 ? value : 1;
-      }
+      async function ensureScoreboardRow() {
+        const { data, error } = await supabase
+          .from("scoreboard")
+          .select("*")
+          .eq("id", 1)
+          .maybeSingle();
 
-      function renderLeaderboard() {
-        const scoreMap = new Map();
-
-        for (const task of tasks) {
-          if (!task.is_done) continue;
-          const person = task.assignee?.trim() || "Unassigned";
-          const existing = scoreMap.get(person) || { points: 0, completed: 0 };
-          existing.points += getTaskPoints(task);
-          existing.completed += 1;
-          scoreMap.set(person, existing);
+        if (error) {
+          console.error("ensureScoreboardRow error", error);
+          statusLine.textContent = `Could not load scoreboard: ${error.message}`;
+          return;
         }
 
-        const rows = Array.from(scoreMap.entries())
-          .map(([name, stats]) => ({ name, ...stats }))
-          .sort((a, b) => b.points - a.points || b.completed - a.completed || a.name.localeCompare(b.name));
+        if (!data) {
+          const { error: insertError } = await supabase.from("scoreboard").insert({
+            id: 1,
+            woman_score: 0,
+            man_score: 0,
+            last_reset_at: new Date().toISOString()
+          });
 
-        const totalPoints = rows.reduce((sum, row) => sum + row.points, 0);
-        leaderboardSummary.textContent = `${totalPoints} point${totalPoints === 1 ? "" : "s"} awarded`;
+          if (insertError) {
+            console.error("scoreboard insert error", insertError);
+            statusLine.textContent = `Could not create scoreboard: ${insertError.message}`;
+            return;
+          }
+        }
+      }
 
-        leaderboard.innerHTML = rows.length
-          ? rows
-              .map(
-                (row, index) => `
-                  <div class="leader-card">
-                    <div class="leader-name">${index + 1}. ${escapeHtml(row.name)}</div>
-                    <div class="leader-points">${row.points} pts</div>
-                    <div class="leader-meta">${row.completed} task${row.completed === 1 ? "" : "s"} completed</div>
-                  </div>
-                `
-              )
-              .join("")
-          : '<div class="empty-state">No points yet. First completed task wins the opening lead.</div>';
+      async function loadScoreboard() {
+        const { data, error } = await supabase
+          .from("scoreboard")
+          .select("*")
+          .eq("id", 1)
+          .single();
+
+        if (error) {
+          console.error("loadScoreboard error", error);
+          statusLine.textContent = `Could not load scoreboard: ${error.message}`;
+          return false;
+        }
+
+        scoreboardState = data;
+        renderScoreboard();
+        return true;
+      }
+
+      function renderScoreboard() {
+        const woman = Number(scoreboardState.woman_score || 0);
+        const man = Number(scoreboardState.man_score || 0);
+        womanScore.textContent = String(woman);
+        manScore.textContent = String(man);
+        totalScore.textContent = String(woman + man);
+        resetAtText.textContent = formatDateTime(scoreboardState.last_reset_at);
       }
 
       function renderTasks(target, rows, emptyText, isDone) {
@@ -512,18 +523,26 @@
               .map(
                 (task) => `
               <div class="task-item ${isDone ? "done-item" : ""}" data-id="${task.id}">
-                <button type="button" class="${isDone ? "undo-btn" : "check-btn"}" data-action="${isDone ? "undo" : "complete"}" title="${isDone ? "Move back to outstanding" : "Mark as done"}">${isDone ? "↺" : ""}</button>
                 <div class="task-text">
                   <div class="task-main">${escapeHtml(task.title)}</div>
-                  <div class="task-badges">
-                    ${task.assignee ? `<span class="chip person">${escapeHtml(task.assignee)}</span>` : ""}
-                    <span class="chip points">${getTaskPoints(task)} pt${getTaskPoints(task) === 1 ? "" : "s"}</span>
-                  </div>
+                  ${isDone && task.completed_by ? `<div class="done-by ${task.completed_by}">Completed by: ${escapeHtml(task.completed_by)}</div>` : ""}
                   <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
                 </div>
-                <div class="task-actions">
-                  <button type="button" class="secondary-btn" data-action="edit">Edit</button>
-                  <button type="button" class="danger-btn" data-action="delete">Delete</button>
+                <div>
+                  ${isDone ? `
+                    <div class="task-actions">
+                      <button type="button" class="undo-btn" data-action="undo">Undo</button>
+                      <button type="button" class="secondary-btn" data-action="edit">Edit</button>
+                      <button type="button" class="danger-btn" data-action="delete">Delete</button>
+                    </div>
+                  ` : `
+                    <div class="complete-actions">
+                      <button type="button" class="woman-btn" data-action="complete-woman">Woman</button>
+                      <button type="button" class="man-btn" data-action="complete-man">Man</button>
+                      <button type="button" class="secondary-btn" data-action="edit">Edit</button>
+                      <button type="button" class="danger-btn" data-action="delete">Delete</button>
+                    </div>
+                  `}
                 </div>
               </div>
             `
@@ -541,7 +560,7 @@
 
         renderTasks(todoList, todos, "No outstanding tasks.", false);
         renderTasks(doneList, done, "Nothing completed yet.", true);
-        renderLeaderboard();
+        renderScoreboard();
       }
 
       async function loadTasks() {
@@ -566,15 +585,14 @@
         return true;
       }
 
-      async function addTask(title, assignee, points) {
+      async function addTask(title) {
         const sortOrder = tasks.reduce((max, t) => Math.max(max, Number(t.sort_order) || 0), 0) + 1;
 
         const { error } = await supabase.from("tasks").insert({
           title,
-          assignee: assignee || null,
-          points,
           is_done: false,
-          sort_order: sortOrder
+          sort_order: sortOrder,
+          completed_by: null
         });
 
         if (error) {
@@ -585,8 +603,6 @@
         }
 
         taskInput.value = "";
-        assigneeInput.value = "";
-        pointsInput.value = "5";
         taskInput.blur();
         await loadTasks();
       }
@@ -619,11 +635,56 @@
         return true;
       }
 
-      function showCelebration(task) {
+      async function incrementScore(kind) {
+        const nextWoman = Number(scoreboardState.woman_score || 0) + (kind === "woman" ? 1 : 0);
+        const nextMan = Number(scoreboardState.man_score || 0) + (kind === "man" ? 1 : 0);
+
+        const { error } = await supabase
+          .from("scoreboard")
+          .update({
+            woman_score: nextWoman,
+            man_score: nextMan
+          })
+          .eq("id", 1);
+
+        if (error) {
+          console.error("incrementScore error", error);
+          alert(`Could not update scoreboard: ${error.message}`);
+          statusLine.textContent = `Score update failed: ${error.message}`;
+          return false;
+        }
+
+        scoreboardState.woman_score = nextWoman;
+        scoreboardState.man_score = nextMan;
+        renderScoreboard();
+        return true;
+      }
+
+      async function resetScoreboard() {
+        const { error } = await supabase
+          .from("scoreboard")
+          .update({
+            woman_score: 0,
+            man_score: 0,
+            last_reset_at: new Date().toISOString()
+          })
+          .eq("id", 1);
+
+        if (error) {
+          console.error("resetScoreboard error", error);
+          alert(`Could not reset scoreboard: ${error.message}`);
+          statusLine.textContent = `Reset failed: ${error.message}`;
+          return false;
+        }
+
+        await loadScoreboard();
+        return true;
+      }
+
+      function showCelebration(kind) {
         const message = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
-        const who = task.assignee?.trim() ? `${task.assignee} ` : "";
-        const points = getTaskPoints(task);
-        celebrationText.innerHTML = `${escapeHtml(message)}<br /><span style="font-size:0.55em; font-weight:800;">${escapeHtml(who)}+${points} point${points === 1 ? "" : "s"}</span>`;
+        const label = kind === "woman" ? "Woman +1" : "Man +1";
+        celebrationText.innerHTML = `${escapeHtml(message)}<br /><span style="font-size:0.55em; font-weight:800;">${escapeHtml(label)}</span>`;
         celebration.classList.add("show");
 
         clearTimeout(showCelebration.hideTimer);
@@ -636,9 +697,13 @@
         event.preventDefault();
         const title = taskInput.value.trim();
         if (!title) return;
-        const assignee = assigneeInput.value.trim();
-        const points = Number(pointsInput.value) || 1;
-        await addTask(title, assignee, points);
+        await addTask(title);
+      });
+
+      resetScoresBtn.addEventListener("click", async () => {
+        const confirmed = window.confirm("Reset the scoreboard back to zero?");
+        if (!confirmed) return;
+        await resetScoreboard();
       });
 
       document.addEventListener("click", async (event) => {
@@ -655,40 +720,33 @@
         const task = tasks.find((item) => item.id === id);
         if (!task) return;
 
-        if (action === "complete") {
-          const ok = await updateTask(id, { is_done: true });
-          if (ok) showCelebration(task);
+        if (action === "complete-woman" || action === "complete-man") {
+          const kind = action === "complete-woman" ? "woman" : "man";
+          const okTask = await updateTask(id, { is_done: true, completed_by: kind });
+          if (!okTask) return;
+          const okScore = await incrementScore(kind);
+          if (okScore) showCelebration(kind);
           return;
         }
 
         if (action === "undo") {
-          await updateTask(id, { is_done: false });
+          await updateTask(id, { is_done: false, completed_by: null });
           return;
         }
 
         if (action === "edit") {
-          const title = window.prompt("Edit task title:", task.title);
+          const title = window.prompt("Edit task:", task.title);
           if (title === null) return;
-          const trimmedTitle = title.trim();
-          if (!trimmedTitle) return;
-
-          const assignee = window.prompt("Who is this for? Leave blank for none:", task.assignee || "");
-          if (assignee === null) return;
-
-          const points = window.prompt("How many points is it worth?", String(getTaskPoints(task)));
-          if (points === null) return;
-          const parsedPoints = Math.max(1, Number(points) || 1);
-
-          await updateTask(id, {
-            title: trimmedTitle,
-            assignee: assignee.trim() || null,
-            points: parsedPoints
-          });
+          const trimmed = title.trim();
+          if (!trimmed) return;
+          await updateTask(id, { title: trimmed });
           return;
         }
 
         if (action === "delete") {
-          const confirmed = window.confirm(`Delete this task?\n\n${task.title}`);
+          const confirmed = window.confirm(`Delete this task?
+
+${task.title}`);
           if (confirmed) await deleteTask(id);
         }
       });
@@ -702,8 +760,17 @@
             await loadTasks();
           }
         )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "scoreboard" },
+          async () => {
+            await loadScoreboard();
+          }
+        )
         .subscribe();
 
+      await ensureScoreboardRow();
+      await loadScoreboard();
       await loadTasks();
     </script>
   </body>
