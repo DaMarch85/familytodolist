@@ -153,12 +153,7 @@
 
       .task-list,
       .score-grid {
-        display: grid;
-        gap: 12px;
-      }
-
-      .score-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .score-card {
@@ -167,13 +162,14 @@
         padding: 16px;
       }
 
-      .score-label {
-        font-size: 0.92rem;
-        color: var(--muted);
-        margin-bottom: 8px;
+      .score-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
       }
 
-      .score-value {
+      .score-value,
+      .score-name {
         font-size: 2rem;
         font-weight: 900;
         line-height: 1;
@@ -187,7 +183,7 @@
 
       .task-item {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: 1fr;
         gap: 12px;
         align-items: center;
         border: 1px solid var(--border);
@@ -224,12 +220,39 @@
       }
 
       .task-meta {
-        margin-top: 8px;
         color: var(--muted);
         font-size: 0.85rem;
       }
 
       .task-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .task-links {
+        display: flex;
+        gap: 14px;
+        margin-top: 10px;
+      }
+
+      .link-btn {
+        background: transparent;
+        color: #111827;
+        border: 0;
+        padding: 0;
+        font-size: 0.92rem;
+        font-weight: 500;
+        text-decoration: none;
+      }
+
+      .link-btn:hover {
+        transform: none;
+        text-decoration: underline;
+      }
+
+      .complete-actions {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
@@ -317,15 +340,7 @@
           grid-template-columns: 1fr;
         }
 
-        .task-item {
-          grid-template-columns: 1fr;
-        }
-
         .complete-actions,
-        .task-actions {
-          justify-content: flex-start;
-        }
-      }
     </style>
   </head>
   <body>
@@ -355,19 +370,16 @@
         </div>
         <div class="score-grid">
           <div class="score-card">
-            <div class="score-label">Woman</div>
-            <div id="womanScore" class="score-value">0</div>
-            <div class="score-subtext">Tasks completed by a woman</div>
+            <div class="score-row">
+              <div id="womanScore" class="score-value">0</div>
+              <div class="score-name">Woman</div>
+            </div>
           </div>
           <div class="score-card">
-            <div class="score-label">Man</div>
-            <div id="manScore" class="score-value">0</div>
-            <div class="score-subtext">Tasks completed by a man</div>
-          </div>
-          <div class="score-card">
-            <div class="score-label">Total this round</div>
-            <div id="totalScore" class="score-value">0</div>
-            <div id="resetAtText" class="score-subtext">Not reset yet</div>
+            <div class="score-row">
+              <div id="manScore" class="score-value">0</div>
+              <div class="score-name">Man</div>
+            </div>
           </div>
         </div>
       </section>
@@ -417,8 +429,7 @@
       const doneCount = document.getElementById("doneCount");
       const womanScore = document.getElementById("womanScore");
       const manScore = document.getElementById("manScore");
-      const totalScore = document.getElementById("totalScore");
-      const resetAtText = document.getElementById("resetAtText");
+      
       const resetScoresBtn = document.getElementById("resetScoresBtn");
       const celebration = document.getElementById("celebration");
       const celebrationText = document.getElementById("celebrationText");
@@ -440,26 +451,9 @@
           .replaceAll("'", "&#039;");
       }
 
-      function formatDateTime(iso) {
-        if (!iso) return "Not reset yet";
-        const date = new Date(iso);
-        return `Last reset: ${date.toLocaleString([], {
-          day: "numeric",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit"
-        })}`;
-      }
+      
 
-      function formatUpdatedAt(iso) {
-        const date = new Date(iso);
-        return `Last updated: ${date.toLocaleString([], {
-          day: "numeric",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit"
-        })}`;
-      }
+      
 
       async function ensureScoreboardRow() {
         const { data, error } = await supabase
@@ -513,8 +507,6 @@
         const man = Number(scoreboardState.man_score || 0);
         womanScore.textContent = String(woman);
         manScore.textContent = String(man);
-        totalScore.textContent = String(woman + man);
-        resetAtText.textContent = formatDateTime(scoreboardState.last_reset_at);
       }
 
       function renderTasks(target, rows, emptyText, isDone) {
@@ -526,23 +518,7 @@
                 <div class="task-text">
                   <div class="task-main">${escapeHtml(task.title)}</div>
                   ${isDone && task.completed_by ? `<div class="done-by ${task.completed_by}">Completed by: ${escapeHtml(task.completed_by)}</div>` : ""}
-                  <div class="task-meta">${formatUpdatedAt(task.updated_at)}</div>
-                </div>
-                <div>
-                  ${isDone ? `
-                    <div class="task-actions">
-                      <button type="button" class="undo-btn" data-action="undo">Undo</button>
-                      <button type="button" class="secondary-btn" data-action="edit">Edit</button>
-                      <button type="button" class="danger-btn" data-action="delete">Delete</button>
-                    </div>
-                  ` : `
-                    <div class="complete-actions">
-                      <button type="button" class="woman-btn" data-action="complete-woman">Woman</button>
-                      <button type="button" class="man-btn" data-action="complete-man">Man</button>
-                      <button type="button" class="secondary-btn" data-action="edit">Edit</button>
-                      <button type="button" class="danger-btn" data-action="delete">Delete</button>
-                    </div>
-                  `}
+                  ${isDone ? `<div class="task-actions"><button type="button" class="undo-btn" data-action="undo">Undo</button><button type="button" class="secondary-btn" data-action="edit">Edit</button><button type="button" class="danger-btn" data-action="delete">Delete</button></div>` : `<div class="complete-actions"><button type="button" class="woman-btn" data-action="complete-woman">Woman</button><button type="button" class="man-btn" data-action="complete-man">Man</button></div><div class="task-links"><button type="button" class="link-btn" data-action="edit">Edit</button><button type="button" class="link-btn" data-action="delete">Delete</button></div>`}
                 </div>
               </div>
             `
